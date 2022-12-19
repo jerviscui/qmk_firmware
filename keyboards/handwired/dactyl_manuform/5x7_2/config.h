@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config_common.h"
 
-#define PRODUCT Dactyl-Manuform (5x7+2)  // The name of the keyboard shown in OS
-
 /* key matrix size */
 // left rows + right rows
 #define MATRIX_ROWS 14
@@ -43,3 +41,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define RGBLED_SPLIT 12
 
 #define DYNAMIC_MACRO_NO_NESTING
+
+#define SPLIT_USB_DETECT
