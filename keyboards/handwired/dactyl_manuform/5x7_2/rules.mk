@@ -18,6 +18,6 @@ RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 SPLIT_KEYBOARD = yes
 
-CAPS_WORD_ENABLECAPS_WORD_ENABLE = yes
+CAPS_WORD_ENABLE = yes
 DYNAMIC_MACRO_ENABLE = yes
 SWAP_HANDS_ENABLE = yes
