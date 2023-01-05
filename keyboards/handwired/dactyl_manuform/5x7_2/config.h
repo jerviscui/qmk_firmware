@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MATRIX_ROW_PINS { D0, D4, C6, D7, E6, B4, B5 }
 #define MATRIX_COL_PINS { F5, F6, F7, B1, B3, B2, B6 }
 
-// COL2ROW 表示二极管指向行导线，反之 ROW2COL 二极管指向开关
+// COL2ROW 表示二极管指向行导线，反之 ROW2COL 二极管指列
 #define DIODE_DIRECTION COL2ROW
 
 // WS2812 RGB LED strip input and number of LEDs
