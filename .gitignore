@@ -118,3 +118,5 @@ via*.json
 /keyboards/**/keymaps/vial/*
 
 .vscode/
+
+!release/*.hex
