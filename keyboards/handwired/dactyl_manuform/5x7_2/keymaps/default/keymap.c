@@ -24,6 +24,8 @@ enum custom_layer {
 #define OSMRS OSM(MOD_RSFT)
 #define OSMLA OSM(MOD_LALT)
 #define OSMRA OSM(MOD_RALT)
+#define OSMLC OSM(MOD_LCTL)
+#define OSMRC OSM(MOD_RCTL)
 #define OSMWin OSM(MOD_LGUI)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -34,7 +36,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LSFT,    KC_Z,    KC_X,      KC_C,   KC_V,   KC_B,                                               KC_N,    KC_M,   KC_COMM,    KC_DOT,   KC_SLSH,  KC_RSFT,
         CW_TOGG,    L2,      OSMWin,    L1,                                                                                  KC_UP,      KC_DOWN,  KC_LEFT,  KC_RGHT,
                                                 KC_SPC, KC_DEL,                                             KC_BSPC, KC_ENT,
-                                                                KC_LCTL, KC_ENT,       KC_PGUP, KC_RCTL,
+                                                                OSMLC,   KC_ENT,       KC_PGUP, OSMRC,
                                                                 OSMLA,   SH_TG,        KC_PGDN, OSMRA
     ),
 
