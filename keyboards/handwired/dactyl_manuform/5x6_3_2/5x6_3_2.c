@@ -30,4 +30,36 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
     return true;
 }
-#endif 
+#endif
+
+int clear = 0;
+void oneshot_mods_changed_user(uint8_t mods) {
+    if (mods & MOD_MASK_SHIFT) {
+        if (MOD_MASK_CTRL | MOD_MASK_ALT | MOD_MASK_GUI) {
+            clear++;
+        }
+    }
+    if (mods & MOD_MASK_CTRL) {
+        if (MOD_MASK_SHIFT | MOD_MASK_ALT | MOD_MASK_GUI) {
+            clear++;
+        }
+    }
+    if (mods & MOD_MASK_ALT) {
+        if (MOD_MASK_CTRL | MOD_MASK_SHIFT | MOD_MASK_GUI) {
+            clear++;
+        }
+    }
+    if (mods & MOD_MASK_GUI) {
+        if (MOD_MASK_CTRL | MOD_MASK_ALT | MOD_MASK_SHIFT) {
+            clear++;
+        }
+    }
+
+    if (!mods) {
+        // println("Oneshot mods off");
+        if(clear != 0){
+            clear_oneshot_mods();
+            clear = 0;
+        }
+    }
+}
