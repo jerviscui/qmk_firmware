@@ -32,6 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // COL2ROW 表示二极管指向行导线，反之 ROW2COL 二极管指列
 #define DIODE_DIRECTION COL2ROW
 
+#undef SOFT_SERIAL_PIN
+#define SOFT_SERIAL_PIN D1  // or D0, D2, D3
+
 // WS2812 RGB LED strip input and number of LEDs
 // // 连接led数据引脚
 // #define RGB_DI_PIN D3

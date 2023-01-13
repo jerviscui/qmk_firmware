@@ -1,15 +1,15 @@
 {
-    "keyboard_name": "Dactyl-Manuform (5x7+2)",
+    "keyboard_name": "Dactyl-Manuform (5x6+3+2)",
     "manufacturer": "jervis",
     "url": "",
     "maintainer": "qmk",
     "usb": {
         "vid": "0x444D",
         "pid": "0x3537",
-        "device_version": "0.1.0"
+        "device_version": "0.2.0"
     },
     "layouts": {
-        "LAYOUT_5x7_2": {
+        "LAYOUT_5x6_3_2": {
             "layout": [
                 {"x": 0, "y": 0},
                 {"x": 1, "y": 0},

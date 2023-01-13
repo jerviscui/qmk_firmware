@@ -1,4 +1,4 @@
-#include "5x7_2.h"
+#include "5x6_3_2.h"
 
 #ifdef SWAP_HANDS_ENABLE
 // __attribute__ ((weak))
