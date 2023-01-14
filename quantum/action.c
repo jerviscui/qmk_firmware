@@ -455,6 +455,12 @@ void process_action(keyrecord_t *record, action_t action) {
                                 // Not a tap, but a hold: register the held mod
                                 ac_dprintf("MODS_TAP: Oneshot: 0\n");
                                 register_mods(mods);
+
+                                //todo cuizj: test
+                                // dprint("MODS_TAP: Oneshot: 0\n");
+                                // // https://github.com/qmk/qmk_firmware/issues/3963#issuecomment-1074525658
+                                // // register_mods(mods | get_oneshot_mods());
+                                // register_mods(mods);
                             } else if (tap_count == 1) {
                                 ac_dprintf("MODS_TAP: Oneshot: start\n");
                                 add_oneshot_mods(mods);
@@ -465,6 +471,11 @@ void process_action(keyrecord_t *record, action_t action) {
                                 del_oneshot_mods(mods);
                                 add_oneshot_locked_mods(mods);
 #        endif
+                            } else {
+                                //todo cuizj: test, remove all
+                                // // https://github.com/qmk/qmk_firmware/issues/3963#issuecomment-1074525658
+                                // // register_mods(mods | get_oneshot_mods());
+                                // register_mods(mods);
                             }
                         } else {
                             if (tap_count == 0) {
