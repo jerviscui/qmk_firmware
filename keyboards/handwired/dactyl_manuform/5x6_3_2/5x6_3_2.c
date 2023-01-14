@@ -1,4 +1,5 @@
 #include "5x6_3_2.h"
+#include "print.h"
 
 #ifdef SWAP_HANDS_ENABLE
 // __attribute__ ((weak))
@@ -23,43 +24,91 @@ const keypos_t hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
 };
 #endif
 
-#ifdef CONSOLE_ENABLE
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    // If console is enabled, it will print the matrix position and status of each key pressed
-    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", 
-        keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
-    return true;
-}
+  // If console is enabled, it will print the matrix position and status of each key pressed
+#ifdef CONSOLE_ENABLE
+    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
 #endif
 
-int clear = 0;
-void oneshot_mods_changed_user(uint8_t mods) {
-    if (mods & MOD_MASK_SHIFT) {
-        if (MOD_MASK_CTRL | MOD_MASK_ALT | MOD_MASK_GUI) {
-            clear++;
-        }
-    }
-    if (mods & MOD_MASK_CTRL) {
-        if (MOD_MASK_SHIFT | MOD_MASK_ALT | MOD_MASK_GUI) {
-            clear++;
-        }
-    }
-    if (mods & MOD_MASK_ALT) {
-        if (MOD_MASK_CTRL | MOD_MASK_SHIFT | MOD_MASK_GUI) {
-            clear++;
-        }
-    }
-    if (mods & MOD_MASK_GUI) {
-        if (MOD_MASK_CTRL | MOD_MASK_ALT | MOD_MASK_SHIFT) {
-            clear++;
-        }
+    switch (keycode)
+    {
+        case KC_ESC:
+            if (!record->event.pressed)
+            {
+                /* on key up */
+                clear_mods();
+            }
+            return true;            /* process keycode as usual */
     }
 
-    if (!mods) {
-        // println("Oneshot mods off");
-        if(clear != 0){
-            clear_oneshot_mods();
-            clear = 0;
-        }
-    }
+  return true;
 }
+
+// int clear = 0;
+// void oneshot_mods_changed_user(uint8_t mods) {
+//     //mods
+//     //lctrl 1   0000_0001
+//     //rctrl 16  0001_0000
+//     //lalt  4   0000_0100
+//     //ralt  64  0100_0000
+//     //lsft  2   0001_0010
+//     //rsft  32  0010_0000
+//     //win   8   0000_1000
+
+// uint8_t real_mods = get_mods();
+
+// #ifdef CONSOLE_ENABLE
+//     uprintf("mods: %u, real_mods: %u, SHIFT: %u, CTRL: %u, ALT: %u, GUI: %u\n", mods, real_mods, MOD_MASK_SHIFT, MOD_MASK_CTRL, MOD_MASK_ALT, MOD_MASK_GUI);
+// #endif
+
+//     if (mods == 4) {
+//         println("xxxx on");
+//     }
+
+//     if (mods & MOD_MASK_SHIFT) {
+// #ifdef CONSOLE_ENABLE
+//         println("MOD_MASK_SHIFT on");
+// #endif
+//         if (mods != 2 && mods != 32) {
+//             clear++;
+//         }
+//     }
+//     if (mods & MOD_MASK_CTRL) {
+// #ifdef CONSOLE_ENABLE
+//         println("MOD_MASK_CTRL on");
+// #endif
+//         if (mods != 1 && mods != 16) {
+//             clear++;
+//         }
+//     }
+//     if (mods & MOD_MASK_ALT) {
+// #ifdef CONSOLE_ENABLE
+//         println("MOD_MASK_ALT on");
+// #endif
+//         if (mods != 4 && mods != 64) {
+//             clear++;
+//         }
+//     }
+//     if (mods & MOD_MASK_GUI) {
+// #ifdef CONSOLE_ENABLE
+//         println("MOD_MASK_GUI on");
+// #endif 
+//         if (mods != 8) {
+//             clear++;
+//         }
+//     }
+
+//     if (!mods) {
+// #ifdef CONSOLE_ENABLE
+//         println("Oneshot mods off");
+// #endif 
+//         if(clear != 0){
+//             clear = 0;
+//             // clear_mods();
+//         }
+//     }
+
+// #ifdef CONSOLE_ENABLE
+//     uprintf("clear: %u\n", clear);
+// #endif 
+// }
