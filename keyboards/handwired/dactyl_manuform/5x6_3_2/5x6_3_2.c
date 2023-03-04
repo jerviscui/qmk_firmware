@@ -1,6 +1,12 @@
 #include "5x6_3_2.h"
 #include "print.h"
 
+enum custom_layer {
+    _QWERTY,
+    _NUMPAD,
+    _FN
+};
+
 #ifdef SWAP_HANDS_ENABLE
 // __attribute__ ((weak))
 // swap-hands action needs a matrix to define the swap
@@ -25,7 +31,7 @@ const keypos_t hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
 #endif
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  // If console is enabled, it will print the matrix position and status of each key pressed
+    // If console is enabled, it will print the matrix position and status of each key pressed
 #ifdef CONSOLE_ENABLE
     uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
 #endif
@@ -42,6 +48,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
   return true;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+#ifdef CONSOLE_ENABLE
+    uprintf("%08lX\n", state);
+    layer_debug();
+#endif
+
+    enum custom_layer layer = _NUMPAD;
+    if (IS_LAYER_ON_STATE(state, layer)) {
+        led_t led_state = host_keyboard_led_state();
+#ifdef CONSOLE_ENABLE
+        uprintf("num: %2u, caps: %2u, scroll: %2u\n", led_state.num_lock, led_state.caps_lock, led_state.scroll_lock);
+#endif
+
+        if (!led_state.num_lock) {
+            tap_code(KC_NUM_LOCK);
+        }
+    }
+
+    return state;
 }
 
 // int clear = 0;
