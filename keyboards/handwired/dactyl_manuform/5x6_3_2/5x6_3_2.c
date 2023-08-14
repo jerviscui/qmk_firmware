@@ -82,6 +82,10 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 void oneshot_locked_mods_changed_user(uint8_t mods) {
     if (mods & MOD_MASK_SHIFT) {//MOD_BIT_LCTRL
         println("Oneshot mods SHIFT");
+
+        register_code(KC_F15);
+        tap_code(KC_1);
+        unregister_code(KC_F15);
     }
     if (mods & MOD_MASK_CTRL) {
         println("Oneshot mods CTRL");
