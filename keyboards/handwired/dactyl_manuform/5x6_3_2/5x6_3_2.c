@@ -36,18 +36,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
 #endif
 
-    switch (keycode)
-    {
+    switch (keycode) {
         case KC_ESC:
-            if (!record->event.pressed)
-            {
+            if (!record->event.pressed) {
                 /* on key up */
                 clear_mods();
             }
-            return true;            /* process keycode as usual */
+            return true; /* process keycode as usual */
     }
 
-  return true;
+    return true;
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
@@ -67,8 +65,36 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             tap_code(KC_NUM_LOCK);
         }
     }
+    // TG(layer) 开关分别发送一个按键 KC_F13-19,如何发送组合键
+
+    // swap hands callback:
+    //  swap_hands_on()
+    //  swap_hands_off
+    // swap_hands_toggle
+    //  __attribute__((weak)) layer_state_t layer_state_set_user(layer_state_t state) {
+    //      return state;
+    //  }
+    //  需要定义回调方法
 
     return state;
+}
+//OSM 回调，7个按键区分左右
+void oneshot_locked_mods_changed_user(uint8_t mods) {
+    if (mods & MOD_MASK_SHIFT) {//MOD_BIT_LCTRL
+        println("Oneshot mods SHIFT");
+    }
+    if (mods & MOD_MASK_CTRL) {
+        println("Oneshot mods CTRL");
+    }
+    if (mods & MOD_MASK_ALT) {
+        println("Oneshot mods ALT");
+    }
+    if (mods & MOD_MASK_GUI) {
+        println("Oneshot mods GUI");
+    }
+    if (!mods) {
+        println("Oneshot mods off");
+    }
 }
 
 // int clear = 0;
@@ -119,7 +145,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 //     if (mods & MOD_MASK_GUI) {
 // #ifdef CONSOLE_ENABLE
 //         println("MOD_MASK_GUI on");
-// #endif 
+// #endif
 //         if (mods != 8) {
 //             clear++;
 //         }
@@ -128,7 +154,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 //     if (!mods) {
 // #ifdef CONSOLE_ENABLE
 //         println("Oneshot mods off");
-// #endif 
+// #endif
 //         if(clear != 0){
 //             clear = 0;
 //             // clear_mods();
@@ -137,5 +163,5 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 // #ifdef CONSOLE_ENABLE
 //     uprintf("clear: %u\n", clear);
-// #endif 
+// #endif
 // }
