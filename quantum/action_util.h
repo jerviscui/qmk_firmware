@@ -83,8 +83,8 @@ uint8_t get_oneshot_layer_state(void);
 bool    has_oneshot_layer_timed_out(void);
 bool    has_oneshot_swaphands_timed_out(void);
 
-void oneshot_locked_mods_changed_user(uint8_t mods);
-void oneshot_locked_mods_changed_kb(uint8_t mods);
+void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods);
+void oneshot_locked_mods_changed_kb(uint8_t mods, uint8_t locked_mods);
 void oneshot_mods_changed_user(uint8_t mods);
 void oneshot_mods_changed_kb(uint8_t mods);
 void oneshot_layer_changed_user(uint8_t layer);

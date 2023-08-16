@@ -78,59 +78,92 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 void swap_hands_toggle_user(void) {
-    if (is_swap_hands_on()) {
-        send_combo(KC_F15, KC_9);
+    uprintf("toogle");
 
+    if (is_swap_hands_on()) {
+    uprintf("toogle on");
+
+        send_combo(KC_F15, KC_9);
     } else {
+    uprintf("toogle off");
+
         send_combo(KC_F15, KC_0);
     }
 }
 
-void oneshot_locked_mods_changed_user(uint8_t mods) {
-    if (mods & MOD_BIT_LSHIFT) {
-        send_combo(KC_F16, KC_1);
-    } else {
+void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods) {
+#ifdef CONSOLE_ENABLE
+    // uprint_hex32();
+    // uprint_bin32();
+    uprintf("%08b\n%08b\n", mods, locked_mods);
+#endif
+
+    if(mods == 0){
+#ifdef CONSOLE_ENABLE
+        println("Oneshot mods off");
+#endif
+        //when clear_oneshot_locked_mods
         send_combo(KC_F16, KC_2);
-    }
-
-    if (mods & MOD_BIT_RSHIFT) {
-        send_combo(KC_F16, KC_3);
-    } else {
         send_combo(KC_F16, KC_4);
-    }
-
-    if (mods & MOD_BIT_LALT) {
-        send_combo(KC_F16, KC_5);
-    } else {
         send_combo(KC_F16, KC_6);
-    }
-
-    if (mods & MOD_BIT_LCTRL) {
-        send_combo(KC_F16, KC_7);
-    } else {
         send_combo(KC_F16, KC_8);
-    }
-
-    if (mods & MOD_BIT_LGUI) {
-        send_combo(KC_F16, KC_9);
-    } else {
         send_combo(KC_F16, KC_0);
     }
 
-    if (mods & MOD_MASK_SHIFT) {
-        println("Oneshot mods SHIFT");
-    }
-    if (mods & MOD_MASK_CTRL) {
-        println("Oneshot mods CTRL");
-    }
-    if (mods & MOD_MASK_ALT) {
-        println("Oneshot mods ALT");
-    }
-    if (mods & MOD_MASK_GUI) {
-        println("Oneshot mods GUI");
-    }
-    if (!mods) {
-        println("Oneshot mods off");
+    if (mods & MOD_BIT_LSHIFT) {
+#ifdef CONSOLE_ENABLE
+        println("Oneshot mods LSHIFT");
+#endif
+        if(locked_mods & MOD_BIT_LSHIFT){
+            send_combo(KC_F16, KC_1);
+        }
+        else {
+            send_combo(KC_F16, KC_2);
+        }
+    } 
+    else if (mods & MOD_BIT_RSHIFT) {
+#ifdef CONSOLE_ENABLE
+        println("Oneshot mods RSHIFT");
+#endif
+        if(locked_mods & MOD_BIT_RSHIFT){
+            send_combo(KC_F16, KC_3);
+        }
+        else {
+            send_combo(KC_F16, KC_4);
+        }
+    } 
+    else if (mods & MOD_BIT_LALT) {
+#ifdef CONSOLE_ENABLE
+        println("Oneshot mods LALT");
+#endif
+        if(locked_mods & MOD_BIT_LALT){
+            send_combo(KC_F16, KC_5);
+        }
+        else {
+            send_combo(KC_F16, KC_6);
+        }
+    } 
+    else if (mods & MOD_BIT_LCTRL) {
+#ifdef CONSOLE_ENABLE
+        println("Oneshot mods LCTRL");
+#endif
+        if(locked_mods & MOD_BIT_LCTRL){
+            send_combo(KC_F16, KC_7);
+        }
+        else {
+            send_combo(KC_F16, KC_8);
+        }
+    } 
+    else if (mods & MOD_BIT_LGUI) {
+#ifdef CONSOLE_ENABLE
+        println("Oneshot mods LGUI");
+#endif
+        if(locked_mods & MOD_BIT_LGUI){
+            send_combo(KC_F16, KC_9);
+        }
+        else {
+            send_combo(KC_F16, KC_0);
+        }
     }
 }
 

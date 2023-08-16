@@ -52,25 +52,25 @@ uint8_t        get_oneshot_locked_mods(void) {
 void add_oneshot_locked_mods(uint8_t mods) {
     if ((oneshot_locked_mods & mods) != mods) {
         oneshot_locked_mods |= mods;
-        oneshot_locked_mods_changed_kb(oneshot_locked_mods);
+        oneshot_locked_mods_changed_kb(mods, oneshot_locked_mods);
     }
 }
 void set_oneshot_locked_mods(uint8_t mods) {
     if (mods != oneshot_locked_mods) {
         oneshot_locked_mods = mods;
-        oneshot_locked_mods_changed_kb(oneshot_locked_mods);
+        oneshot_locked_mods_changed_kb(mods, oneshot_locked_mods);
     }
 }
 void clear_oneshot_locked_mods(void) {
     if (oneshot_locked_mods) {
         oneshot_locked_mods = 0;
-        oneshot_locked_mods_changed_kb(oneshot_locked_mods);
+        oneshot_locked_mods_changed_kb(0, oneshot_locked_mods);
     }
 }
 void del_oneshot_locked_mods(uint8_t mods) {
     if (oneshot_locked_mods & mods) {
         oneshot_locked_mods &= ~mods;
-        oneshot_locked_mods_changed_kb(oneshot_locked_mods);
+        oneshot_locked_mods_changed_kb(mods, oneshot_locked_mods);
     }
 }
 #    if (defined(ONESHOT_TIMEOUT) && (ONESHOT_TIMEOUT > 0))
@@ -488,14 +488,14 @@ void clear_oneshot_mods(void) {
  *
  * \param mods Contains the active modifiers active after the change.
  */
-__attribute__((weak)) void oneshot_locked_mods_changed_user(uint8_t mods) {}
+__attribute__((weak)) void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods) {}
 
 /** \brief Called when the locked one shot modifiers have been changed.
  *
  * \param mods Contains the active modifiers active after the change.
  */
-__attribute__((weak)) void oneshot_locked_mods_changed_kb(uint8_t mods) {
-    oneshot_locked_mods_changed_user(mods);
+__attribute__((weak)) void oneshot_locked_mods_changed_kb(uint8_t mods, uint8_t locked_mods) {
+    oneshot_locked_mods_changed_user(mods, locked_mods);
 }
 
 /** \brief Called when the one shot modifiers have been changed.
