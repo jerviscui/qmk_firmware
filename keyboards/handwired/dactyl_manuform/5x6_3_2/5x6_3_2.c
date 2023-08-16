@@ -1,11 +1,7 @@
 #include "5x6_3_2.h"
 #include "print.h"
 
-enum custom_layer {
-    _QWERTY,
-    _NUMPAD,
-    _FN
-};
+enum custom_layer { _QWERTY, _NUMPAD, _FN };
 
 #ifdef SWAP_HANDS_ENABLE
 // __attribute__ ((weak))
@@ -48,44 +44,81 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+void send_combo(uint8_t codeOne, uint8_t codeTwo) {
+    register_code(codeOne);
+    tap_code(codeTwo);
+    unregister_code(codeOne);
+}
+
 layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef CONSOLE_ENABLE
     uprintf("%08lX\n", state);
     layer_debug();
 #endif
 
-    enum custom_layer layer = _NUMPAD;
-    if (IS_LAYER_ON_STATE(state, layer)) {
+    if (IS_LAYER_ON_STATE(state, _NUMPAD)) {
         led_t led_state = host_keyboard_led_state();
 #ifdef CONSOLE_ENABLE
         uprintf("num: %2u, caps: %2u, scroll: %2u\n", led_state.num_lock, led_state.caps_lock, led_state.scroll_lock);
 #endif
-
         if (!led_state.num_lock) {
             tap_code(KC_NUM_LOCK);
         }
-    }
-    // TG(layer) 开关分别发送一个按键 KC_F13-19,如何发送组合键
 
-    // swap hands callback:
-    //  swap_hands_on()
-    //  swap_hands_off
-    // swap_hands_toggle
-    //  __attribute__((weak)) layer_state_t layer_state_set_user(layer_state_t state) {
-    //      return state;
-    //  }
-    //  需要定义回调方法
+        send_combo(KC_F15, KC_1);
+    } else if (IS_LAYER_OFF_STATE(state, _NUMPAD)) {
+        send_combo(KC_F15, KC_2);
+    } else if (IS_LAYER_ON_STATE(state, _FN)) {
+        send_combo(KC_F15, KC_3);
+    } else if (IS_LAYER_OFF_STATE(state, _FN)) {
+        send_combo(KC_F15, KC_4);
+    }
 
     return state;
 }
-//OSM 回调，7个按键区分左右
-void oneshot_locked_mods_changed_user(uint8_t mods) {
-    if (mods & MOD_MASK_SHIFT) {//MOD_BIT_LCTRL
-        println("Oneshot mods SHIFT");
 
-        register_code(KC_F15);
-        tap_code(KC_1);
-        unregister_code(KC_F15);
+void swap_hands_toggle_user(void) {
+    if (is_swap_hands_on()) {
+        send_combo(KC_F15, KC_9);
+
+    } else {
+        send_combo(KC_F15, KC_0);
+    }
+}
+
+void oneshot_locked_mods_changed_user(uint8_t mods) {
+    if (mods & MOD_BIT_LSHIFT) {
+        send_combo(KC_F16, KC_1);
+    } else {
+        send_combo(KC_F16, KC_2);
+    }
+
+    if (mods & MOD_BIT_RSHIFT) {
+        send_combo(KC_F16, KC_3);
+    } else {
+        send_combo(KC_F16, KC_4);
+    }
+
+    if (mods & MOD_BIT_LALT) {
+        send_combo(KC_F16, KC_5);
+    } else {
+        send_combo(KC_F16, KC_6);
+    }
+
+    if (mods & MOD_BIT_LCTRL) {
+        send_combo(KC_F16, KC_7);
+    } else {
+        send_combo(KC_F16, KC_8);
+    }
+
+    if (mods & MOD_BIT_LGUI) {
+        send_combo(KC_F16, KC_9);
+    } else {
+        send_combo(KC_F16, KC_0);
+    }
+
+    if (mods & MOD_MASK_SHIFT) {
+        println("Oneshot mods SHIFT");
     }
     if (mods & MOD_MASK_CTRL) {
         println("Oneshot mods CTRL");

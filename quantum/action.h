@@ -85,6 +85,12 @@ typedef uint32_t swap_state_row_t;
 #    endif
 
 /**
+ * @brief Runs user code on toggle swap hands
+ * 
+ */
+__attribute__((weak)) void swap_hands_toggle_user(void);
+
+/**
  * @brief Enable swap hands
  */
 void swap_hands_on(void);

@@ -162,16 +162,22 @@ void set_swap_hands_state(size_t index, uint8_t *swap_state, bool on) {
     }
 }
 
+__attribute__((weak)) void swap_hands_toggle_user(void) {    
+}
+
 void swap_hands_on(void) {
     swap_hands = true;
+    swap_hands_toggle_user();
 }
 
 void swap_hands_off(void) {
     swap_hands = false;
+    swap_hands_toggle_user();
 }
 
 void swap_hands_toggle(void) {
     swap_hands = !swap_hands;
+    swap_hands_toggle_user();
 }
 
 bool is_swap_hands_on(void) {

@@ -15,7 +15,8 @@ enum custom_layer {
 #define TASK   LCTL(LSFT(KC_ESC))
 #define TAB_R  LCTL(KC_TAB)
 #define TAB_L  LCTL(LSFT(KC_TAB))
-#define TAB_RO LCTL(LSFT(KC_T))
+#define KC_TC LCTL(KC_W)
+#define KC_TRO LCTL(LSFT(KC_T))
 
 #define L1 TG(_FN)
 #define L2 TG(_NUMPAD)
