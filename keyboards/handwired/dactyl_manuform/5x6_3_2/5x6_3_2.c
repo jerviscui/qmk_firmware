@@ -87,15 +87,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 }
 
 void swap_hands_toggle_user(void) {
-    uprintf("toogle");
-
     if (is_swap_hands_on()) {
-    uprintf("toogle on");
-
         send_combo(KC_F15, KC_9);
     } else {
-    uprintf("toogle off");
-
         send_combo(KC_F15, KC_0);
     }
 }
