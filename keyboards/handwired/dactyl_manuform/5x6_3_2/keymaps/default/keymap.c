@@ -6,8 +6,8 @@
 // entirely and just use numbers.
 enum custom_layer {
     _QWERTY,
-    _NUMPAD,
-    _FN
+    _FN,
+    _NUMPAD    
 };
 
 // Some basic macros

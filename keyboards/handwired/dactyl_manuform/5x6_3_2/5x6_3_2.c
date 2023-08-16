@@ -1,7 +1,11 @@
 #include "5x6_3_2.h"
 #include "print.h"
 
-enum custom_layer { _QWERTY, _NUMPAD, _FN };
+enum custom_layer {
+    _QWERTY,
+    _FN,
+    _NUMPAD    
+};
 
 #ifdef SWAP_HANDS_ENABLE
 // __attribute__ ((weak))
@@ -53,6 +57,7 @@ void send_combo(uint8_t codeOne, uint8_t codeTwo) {
 layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef CONSOLE_ENABLE
     uprintf("%08lX\n", state);
+    uprintf("%2u\n", get_highest_layer(state));    
     layer_debug();
 #endif
 
@@ -64,14 +69,18 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         if (!led_state.num_lock) {
             tap_code(KC_NUM_LOCK);
         }
+    }
 
+    switch (get_highest_layer(state)) {
+        case _QWERTY:
         send_combo(KC_F15, KC_1);
-    } else if (IS_LAYER_OFF_STATE(state, _NUMPAD)) {
-        send_combo(KC_F15, KC_2);
-    } else if (IS_LAYER_ON_STATE(state, _FN)) {
+            break;
+        case _FN:
+        send_combo(KC_F15, KC_2);    
+            break;
+        case _NUMPAD:
         send_combo(KC_F15, KC_3);
-    } else if (IS_LAYER_OFF_STATE(state, _FN)) {
-        send_combo(KC_F15, KC_4);
+            break;
     }
 
     return state;
