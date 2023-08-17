@@ -1,11 +1,7 @@
 #include "5x6_3_2.h"
 #include "print.h"
 
-enum custom_layer {
-    _QWERTY,
-    _FN,
-    _NUMPAD    
-};
+enum custom_layer { _QWERTY, _FN, _NUMPAD };
 
 #ifdef SWAP_HANDS_ENABLE
 // __attribute__ ((weak))
@@ -57,7 +53,7 @@ void send_combo(uint8_t codeOne, uint8_t codeTwo) {
 layer_state_t layer_state_set_user(layer_state_t state) {
 #ifdef CONSOLE_ENABLE
     uprintf("%08lX\n", state);
-    uprintf("%2u\n", get_highest_layer(state));    
+    uprintf("%2u\n", get_highest_layer(state));
     layer_debug();
 #endif
 
@@ -73,13 +69,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
     switch (get_highest_layer(state)) {
         case _QWERTY:
-        send_combo(KC_F15, KC_1);
+            send_combo(KC_F15, KC_1);
             break;
         case _FN:
-        send_combo(KC_F15, KC_2);    
+            send_combo(KC_F15, KC_2);
             break;
         case _NUMPAD:
-        send_combo(KC_F15, KC_3);
+            send_combo(KC_F15, KC_3);
             break;
     }
 
@@ -101,11 +97,11 @@ void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods) {
     uprintf("%08b\n%08b\n", mods, locked_mods);
 #endif
 
-    if(mods == 0){
+    if (mods == 0) {
 #ifdef CONSOLE_ENABLE
         println("Oneshot mods off");
 #endif
-        //when clear_oneshot_locked_mods
+        // when clear_oneshot_locked_mods
         send_combo(KC_F16, KC_2);
         send_combo(KC_F16, KC_4);
         send_combo(KC_F16, KC_6);
@@ -117,54 +113,45 @@ void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods) {
 #ifdef CONSOLE_ENABLE
         println("Oneshot mods LSHIFT");
 #endif
-        if(locked_mods & MOD_BIT_LSHIFT){
+        if (locked_mods & MOD_BIT_LSHIFT) {
             send_combo(KC_F16, KC_1);
-        }
-        else {
+        } else {
             send_combo(KC_F16, KC_2);
         }
-    } 
-    else if (mods & MOD_BIT_RSHIFT) {
+    } else if (mods & MOD_BIT_RSHIFT) {
 #ifdef CONSOLE_ENABLE
         println("Oneshot mods RSHIFT");
 #endif
-        if(locked_mods & MOD_BIT_RSHIFT){
+        if (locked_mods & MOD_BIT_RSHIFT) {
             send_combo(KC_F16, KC_3);
-        }
-        else {
+        } else {
             send_combo(KC_F16, KC_4);
         }
-    } 
-    else if (mods & MOD_BIT_LALT) {
+    } else if (mods & MOD_BIT_LALT) {
 #ifdef CONSOLE_ENABLE
         println("Oneshot mods LALT");
 #endif
-        if(locked_mods & MOD_BIT_LALT){
+        if (locked_mods & MOD_BIT_LALT) {
             send_combo(KC_F16, KC_5);
-        }
-        else {
+        } else {
             send_combo(KC_F16, KC_6);
         }
-    } 
-    else if (mods & MOD_BIT_LCTRL) {
+    } else if (mods & MOD_BIT_LCTRL) {
 #ifdef CONSOLE_ENABLE
         println("Oneshot mods LCTRL");
 #endif
-        if(locked_mods & MOD_BIT_LCTRL){
+        if (locked_mods & MOD_BIT_LCTRL) {
             send_combo(KC_F16, KC_7);
-        }
-        else {
+        } else {
             send_combo(KC_F16, KC_8);
         }
-    } 
-    else if (mods & MOD_BIT_LGUI) {
+    } else if (mods & MOD_BIT_LGUI) {
 #ifdef CONSOLE_ENABLE
         println("Oneshot mods LGUI");
 #endif
-        if(locked_mods & MOD_BIT_LGUI){
+        if (locked_mods & MOD_BIT_LGUI) {
             send_combo(KC_F16, KC_9);
-        }
-        else {
+        } else {
             send_combo(KC_F16, KC_0);
         }
     }
