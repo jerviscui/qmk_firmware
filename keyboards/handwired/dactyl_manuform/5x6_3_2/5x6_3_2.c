@@ -45,8 +45,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 void send_combo(uint8_t codeOne, uint8_t codeTwo) {
+    wait_ms(1);
     register_code(codeOne);
-    tap_code(codeTwo);
+    tap_code_delay(codeTwo, 1);
     unregister_code(codeOne);
 }
 
