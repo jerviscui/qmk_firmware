@@ -7,7 +7,7 @@
 enum custom_layer {
     _QWERTY,
     _FN,
-    _NUMPAD    
+    _NUMPAD
 };
 
 // Some basic macros
@@ -15,7 +15,7 @@ enum custom_layer {
 #define TASK   LCTL(LSFT(KC_ESC))
 #define TAB_R  LCTL(KC_TAB)
 #define TAB_L  LCTL(LSFT(KC_TAB))
-#define KC_TC LCTL(KC_W)
+#define KC_TC  LCTL(KC_W)
 #define KC_TRO LCTL(LSFT(KC_T))
 
 #define L1 TG(_FN)

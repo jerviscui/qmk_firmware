@@ -26,10 +26,60 @@ const keypos_t hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
 };
 #endif
 
+// void keyboard_post_init_user(void) {
+//   // 输出调试内容
+//     debug_enable=true;
+// //   debug_matrix=true;
+// //   debug_keyboard=true;
+// //   debug_mouse=true;
+// }
+
+bool alt_pressed = false;
+bool suppress_alt = false;
+
+bool replace_alt_combo(keyrecord_t *record, uint16_t replace) {
+    if (record->event.pressed) {
+        suppress_alt = true;
+        if (alt_pressed) {
+            register_code(replace);
+            return false;
+        }
+    } else {
+        suppress_alt = false;
+        if (alt_pressed) {
+            unregister_code(replace);
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_I:
+        case KC_J:
+        case KC_K:
+        case KC_L:
+        case KC_Y:
+        case KC_U:
+        case KC_N:
+        case KC_P:
+            if (record->event.pressed) {
+                suppress_alt = true;
+            }
+            break;
+    }
+
+    return true;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // If console is enabled, it will print the matrix position and status of each key pressed
 #ifdef CONSOLE_ENABLE
-    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n", keycode, record->event.key.col, record->event.key.row, record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+    uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n",
+        keycode, record->event.key.col, record->event.key.row, record->event.pressed,
+        record->event.time, record->tap.interrupted, record->tap.count);
 #endif
 
     switch (keycode) {
@@ -38,7 +88,52 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 /* on key up */
                 clear_mods();
             }
-            return true; /* process keycode as usual */
+            break; /* process keycode as usual */
+        case OSM(MOD_LALT):
+#ifdef CONSOLE_ENABLE
+            println("OSM(MOD_LALT)");
+#endif
+            // hold
+            if (record->tap.count == 0) {
+                // press
+                if (record->event.pressed) {
+                    // self or combo key is ijklyunp
+                    if (record->tap.interrupted == 0 || suppress_alt) {
+                        alt_pressed = true;
+                        return false;
+                    }
+                }
+                // release
+                else {
+#ifdef CONSOLE_ENABLE
+                    uprintf("Release: mods: %08b, oneshot: %08b\n", get_mods(), get_oneshot_mods());
+#endif
+                    alt_pressed = false;
+                    if (get_mods() & MOD_BIT(KC_LALT)) {
+                        del_mods(MOD_BIT(KC_LALT));
+                    }
+                    del_oneshot_mods(MOD_BIT_LALT);
+                    del_oneshot_locked_mods(MOD_BIT_LALT);
+                    return false;
+                }
+            }
+            break;
+        case KC_I:
+            return replace_alt_combo(record, KC_UP);
+        case KC_J:
+            return replace_alt_combo(record, KC_LEFT);
+        case KC_K:
+            return replace_alt_combo(record, KC_DOWN);
+        case KC_L:
+            return replace_alt_combo(record, KC_RGHT);
+        case KC_Y:
+            return replace_alt_combo(record, KC_HOME);
+        case KC_U:
+            return replace_alt_combo(record, KC_END);
+        case KC_N:
+            return replace_alt_combo(record, KC_PGDN);
+        case KC_P:
+            return replace_alt_combo(record, KC_PGUP);
     }
 
     return true;
@@ -115,8 +210,10 @@ void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods) {
         println("Oneshot mods LSHIFT");
 #endif
         if (locked_mods & MOD_BIT_LSHIFT) {
+            // locked
             send_combo(KC_F16, KC_1);
         } else {
+            // release
             send_combo(KC_F16, KC_2);
         }
     } else if (mods & MOD_BIT_RSHIFT) {
@@ -157,72 +254,3 @@ void oneshot_locked_mods_changed_user(uint8_t mods, uint8_t locked_mods) {
         }
     }
 }
-
-// int clear = 0;
-// void oneshot_mods_changed_user(uint8_t mods) {
-//     //mods
-//     //lctrl 1   0000_0001
-//     //rctrl 16  0001_0000
-//     //lalt  4   0000_0100
-//     //ralt  64  0100_0000
-//     //lsft  2   0001_0010
-//     //rsft  32  0010_0000
-//     //win   8   0000_1000
-
-// uint8_t real_mods = get_mods();
-
-// #ifdef CONSOLE_ENABLE
-//     uprintf("mods: %u, real_mods: %u, SHIFT: %u, CTRL: %u, ALT: %u, GUI: %u\n", mods, real_mods, MOD_MASK_SHIFT, MOD_MASK_CTRL, MOD_MASK_ALT, MOD_MASK_GUI);
-// #endif
-
-//     if (mods == 4) {
-//         println("xxxx on");
-//     }
-
-//     if (mods & MOD_MASK_SHIFT) {
-// #ifdef CONSOLE_ENABLE
-//         println("MOD_MASK_SHIFT on");
-// #endif
-//         if (mods != 2 && mods != 32) {
-//             clear++;
-//         }
-//     }
-//     if (mods & MOD_MASK_CTRL) {
-// #ifdef CONSOLE_ENABLE
-//         println("MOD_MASK_CTRL on");
-// #endif
-//         if (mods != 1 && mods != 16) {
-//             clear++;
-//         }
-//     }
-//     if (mods & MOD_MASK_ALT) {
-// #ifdef CONSOLE_ENABLE
-//         println("MOD_MASK_ALT on");
-// #endif
-//         if (mods != 4 && mods != 64) {
-//             clear++;
-//         }
-//     }
-//     if (mods & MOD_MASK_GUI) {
-// #ifdef CONSOLE_ENABLE
-//         println("MOD_MASK_GUI on");
-// #endif
-//         if (mods != 8) {
-//             clear++;
-//         }
-//     }
-
-//     if (!mods) {
-// #ifdef CONSOLE_ENABLE
-//         println("Oneshot mods off");
-// #endif
-//         if(clear != 0){
-//             clear = 0;
-//             // clear_mods();
-//         }
-//     }
-
-// #ifdef CONSOLE_ENABLE
-//     uprintf("clear: %u\n", clear);
-// #endif
-// }
