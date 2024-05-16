@@ -36,27 +36,20 @@ const keypos_t hand_swap_config[MATRIX_ROWS][MATRIX_COLS] = {
 
 bool alt_pressed = false;
 bool suppress_alt = false;
-
-bool replace_alt_combo(keyrecord_t *record, uint16_t replace) {
-    if (record->event.pressed) {
-        suppress_alt = true;
-        if (alt_pressed) {
-            register_code(replace);
-            return false;
-        }
-    } else {
-        suppress_alt = false;
-        if (alt_pressed) {
-            unregister_code(replace);
-            return false;
-        }
-    }
-
-    return true;
-}
+bool replace_pressed = false;
+bool with_alt = false;
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+#ifdef CONSOLE_ENABLE
+    uprintf("pre: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n",
+        keycode, record->event.key.col, record->event.key.row,
+        record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+    // uprintf("pre: mods: %08b, oneshot: %08b\n", get_mods(), get_oneshot_mods());
+#endif
     switch (keycode) {
+        case OSM(MOD_LALT):
+            break;
+
         case KC_I:
         case KC_J:
         case KC_K:
@@ -69,6 +62,37 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
                 suppress_alt = true;
             }
             break;
+
+        default:
+            // println("default");
+            if (alt_pressed) {
+                if (!with_alt) {
+                    // println("with_alt");
+                    with_alt = true;
+                    register_mods(MOD_BIT_LALT);
+                    // register_mods(MOD_BIT(KC_LALT)); // same as above
+                }
+            }
+            break;
+    }
+
+    return true;
+}
+
+bool replace_alt_combo(keyrecord_t *record, uint16_t replace) {
+    if (record->event.pressed) {
+        if (alt_pressed) {
+            replace_pressed = true;
+            register_code(replace);
+            return false;
+        }
+    } else {
+        suppress_alt = false;
+        if (replace_pressed) {
+            replace_pressed = false;
+            unregister_code(replace);
+            return false;
+        }
     }
 
     return true;
@@ -78,10 +102,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     // If console is enabled, it will print the matrix position and status of each key pressed
 #ifdef CONSOLE_ENABLE
     uprintf("KL: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n",
-        keycode, record->event.key.col, record->event.key.row, record->event.pressed,
-        record->event.time, record->tap.interrupted, record->tap.count);
+        keycode, record->event.key.col, record->event.key.row,
+        record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
 #endif
-
     switch (keycode) {
         case KC_ESC:
             if (!record->event.pressed) {
@@ -89,28 +112,52 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 clear_mods();
             }
             break; /* process keycode as usual */
+
         case OSM(MOD_LALT):
 #ifdef CONSOLE_ENABLE
             println("OSM(MOD_LALT)");
 #endif
-            // hold
-            if (record->tap.count == 0) {
-                // press
-                if (record->event.pressed) {
+            // press
+            if (record->event.pressed) {
+                // hold
+                if (record->tap.count == 0) {
                     // self or combo key is ijklyunp
-                    if (record->tap.interrupted == 0 || suppress_alt) {
+                    if (record->tap.interrupted == 0) {
+                        alt_pressed = true;
+                        return false;
+                    }
+                    if (record->tap.interrupted == 1 && suppress_alt) {
                         alt_pressed = true;
                         return false;
                     }
                 }
-                // release
-                else {
+                // combo
+                else if (record->tap.count == 1) {
+                    // combo and key is ijklyunp
+                    if (record->tap.interrupted == 1 && suppress_alt) {
+                        alt_pressed = true;
+                        return false;
+                    }
+                }
+            }
+            // release
+            else {
+                // hold with other keys
+                if (with_alt) {
+                    alt_pressed = false;
+                    with_alt = false;
+                    break;
+                }
+
+                // the count and interrupted value same as press
+                if (alt_pressed) {
 #ifdef CONSOLE_ENABLE
                     uprintf("Release: mods: %08b, oneshot: %08b\n", get_mods(), get_oneshot_mods());
 #endif
                     alt_pressed = false;
-                    if (get_mods() & MOD_BIT(KC_LALT)) {
-                        del_mods(MOD_BIT(KC_LALT));
+                    with_alt = false;
+                    if (get_mods() & MOD_BIT_LALT) {
+                        del_mods(MOD_BIT_LALT);
                     }
                     del_oneshot_mods(MOD_BIT_LALT);
                     del_oneshot_locked_mods(MOD_BIT_LALT);
@@ -118,6 +165,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             break;
+
         case KC_I:
             return replace_alt_combo(record, KC_UP);
         case KC_J:
@@ -138,6 +186,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     return true;
 }
+
+// void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+// #ifdef CONSOLE_ENABLE
+//     uprintf("post: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n",
+//         keycode, record->event.key.col, record->event.key.row,
+//         record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+//     // uprintf("post: mods: %08b, oneshot: %08b\n", get_mods(), get_oneshot_mods());
+// #endif
+// }
 
 void send_combo(uint8_t codeOne, uint8_t codeTwo) {
     wait_ms(1);
