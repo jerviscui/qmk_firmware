@@ -187,14 +187,41 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-// void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
-// #ifdef CONSOLE_ENABLE
-//     uprintf("post: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n",
-//         keycode, record->event.key.col, record->event.key.row,
-//         record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
-//     // uprintf("post: mods: %08b, oneshot: %08b\n", get_mods(), get_oneshot_mods());
-// #endif
-// }
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+#ifdef CONSOLE_ENABLE
+    uprintf("post: kc: 0x%04X, col: %2u, row: %2u, pressed: %u, time: %5u, int: %u, count: %u\n",
+        keycode, record->event.key.col, record->event.key.row,
+        record->event.pressed, record->event.time, record->tap.interrupted, record->tap.count);
+    // uprintf("post: mods: %08b, oneshot: %08b\n", get_mods(), get_oneshot_mods());
+#endif
+    switch (keycode) {
+        case OSM(MOD_LALT):
+        case KC_I:
+        case KC_J:
+        case KC_K:
+        case KC_L:
+        case KC_Y:
+        case KC_U:
+        case KC_N:
+        case KC_P:
+            break;
+
+        default:
+            // println("default");
+            if (alt_pressed) {
+                if (with_alt) {
+                    // println("with_alt");
+                    with_alt = false;
+                    if (get_mods() & MOD_BIT_LALT) {
+                        del_mods(MOD_BIT_LALT);
+                    }
+                    del_oneshot_mods(MOD_BIT_LALT);
+                    del_oneshot_locked_mods(MOD_BIT_LALT);
+                }
+            }
+            break;
+    }
+}
 
 void send_combo(uint8_t codeOne, uint8_t codeTwo) {
     wait_ms(1);
