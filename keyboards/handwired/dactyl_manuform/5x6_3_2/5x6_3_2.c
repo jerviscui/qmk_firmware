@@ -55,7 +55,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_K:
         case KC_L:
         case KC_Y:
-        case KC_U:
+        case KC_H:
         case KC_N:
         case KC_P:
             if (record->event.pressed) {
@@ -176,7 +176,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return replace_alt_combo(record, KC_RGHT);
         case KC_Y:
             return replace_alt_combo(record, KC_HOME);
-        case KC_U:
+        case KC_H:
             return replace_alt_combo(record, KC_END);
         case KC_N:
             return replace_alt_combo(record, KC_PGDN);
@@ -201,7 +201,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_K:
         case KC_L:
         case KC_Y:
-        case KC_U:
+        case KC_H:
         case KC_N:
         case KC_P:
             break;
